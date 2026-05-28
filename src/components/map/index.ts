@@ -1,10 +1,11 @@
 import { Map, View } from "ol";
-import { createMapLayers } from "./mapLayer";
 import "ol/ol.css";
-
 import { fromLonLat } from "ol/proj";
 
-export function initMap(dom: HTMLElement | null) {
+import { createMapLayers } from "./mapLayer";
+import { createPlaneLayers } from "./planeLayer";
+
+export async function initMap(dom: HTMLElement | null) {
   if (!dom) return;
   const center = fromLonLat([116.397428, 39.90923]);
   const map = new Map({
@@ -19,8 +20,13 @@ export function initMap(dom: HTMLElement | null) {
     }),
   });
   // 动态添加
-  const layers = createMapLayers();
-  layers.forEach((layer) => {
+  const defaultLayers = createMapLayers();
+  defaultLayers.forEach((layer) => {
+    map.addLayer(layer);
+  });
+
+  const planeLayers = await createPlaneLayers();
+  planeLayers.forEach((layer) => {
     map.addLayer(layer);
   });
 }
