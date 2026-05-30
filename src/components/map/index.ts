@@ -4,6 +4,7 @@ import { fromLonLat } from "ol/proj";
 
 import { createMapLayers } from "./mapLayer";
 import { createPlaneLayers } from "./planeLayer";
+import { attachEvent } from "./event";
 
 export async function initMap(dom: HTMLElement | null) {
   if (!dom) return;
@@ -29,4 +30,6 @@ export async function initMap(dom: HTMLElement | null) {
   planeLayers.forEach((layer) => {
     map.addLayer(layer);
   });
+
+  attachEvent(map);
 }

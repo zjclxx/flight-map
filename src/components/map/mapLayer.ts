@@ -1,8 +1,10 @@
 import TileLayer from "ol/layer/WebGLTile";
 import XYZ from "ol/source/XYZ";
-import { APP_SECRET } from "@/config/auth";
+import { LOCAL_MAP_SECRET_KEY } from "@/config/auth";
 
 export function createMapLayers() {
+  const APP_SECRET = localStorage.getItem(LOCAL_MAP_SECRET_KEY);
+  if (!APP_SECRET) return [];
   return [
     new TileLayer({
       // @ts-ignore
