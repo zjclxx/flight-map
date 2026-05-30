@@ -4,8 +4,7 @@ import VectorLayer from "ol/layer/WebGLVector";
 import { fromLonLat } from "ol/proj";
 import VectorSource from "ol/source/Vector";
 import PlaneIcon from "@/assets/plane.svg";
-// import { flightStateApi } from "@/api/index";
-import { planeList } from "./mock";
+import { flightStateApi } from "@/api/index";
 
 export interface IFlightState {
   icao24: string;
@@ -17,10 +16,16 @@ export interface IFlightState {
   heading: number; //角度
 }
 export async function createPlaneLayers() {
-  // const res = await flightStateApi();
-  const res = {
-    data: planeList,
-  };
+  const planeLayer = await createPlaneVector();
+
+  const planePathLayer = await createPlanePathVector();
+
+  return [...planeLayer, ...planePathLayer];
+}
+
+// 飞机层
+async function createPlaneVector() {
+  const res = await flightStateApi();
 
   const planeLayers = res.data.map((item: IFlightState) => {
     return new Feature({
@@ -52,14 +57,37 @@ export async function createPlaneLayers() {
         filter: ["==", ["+", ["get", "isHovered"], ["get", "isSelected"]], 0],
         style: defaultPlaneStyle,
       },
+    ],
+    // name: "plane",//添加自定义属性 用于判断哪个层
+  });
+  planeLayer.set("name", "plane"); // 上面的直接添加在构造方法的参数ts校验失败
+
+  const activePlaneLayer = new VectorLayer({
+    source,
+    style: [
       {
-        else: true,
+        filter: [">", ["+", ["get", "isHovered"], ["get", "isSelected"]], 0],
         style: activePlaneStyle,
       },
     ],
-    // name: "planes",//添加自定义属性 用于判断哪个层
   });
-  planeLayer.set("name", "planes");
+  activePlaneLayer.set("name", "plane");
 
-  return [planeLayer];
+  return [planeLayer, activePlaneLayer];
+}
+
+// 飞机轨迹层
+async function createPlanePathVector() {
+  const pathLayer = new VectorLayer({
+    source: new VectorSource({
+      features: [],
+    }),
+    style: {
+      "stroke-color": "#3498db",
+      "stroke-width": 2,
+    },
+  });
+  pathLayer.set("name", "planePath");
+
+  return [pathLayer];
 }

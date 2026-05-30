@@ -31,8 +31,8 @@ export async function flightStateApi() {
   return res.data;
 }
 
-export async function flightPathApi(id: number) {
-  const res = await authApi.get(`/flight/paths?icao24=${id}`);
+export async function flightPathApi(id: string) {
+  const res = await authApi.get(`/flight/tracks?id=${id}`);
   return res.data;
 }
 
