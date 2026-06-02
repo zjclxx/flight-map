@@ -50,6 +50,7 @@ function attachClickEvent(map: Map) {
         lastFeature.set("isSelected", 0);
       }
       lastFeature = undefined;
+      console.log("removePath");
       removePath(map);
     }
     const currentFeatures = map.getFeaturesAtPixel(e.pixel, {
@@ -66,7 +67,7 @@ function attachClickEvent(map: Map) {
       const center = currentFeature.getGeometry()?.getCoordinates();
       map.getView().animate({
         center,
-        zoom: 7,
+        zoom: 13,
       });
       addPath(currentFeature, map);
     }
@@ -83,6 +84,8 @@ interface ILonLat {
 }
 async function addPath(planeLayer: FeatureLike, map: Map) {
   const id = planeLayer.get("icao24");
+  // @ts-ignore
+  const currentPoint = planeLayer.getGeometry()?.getCoordinates();
   const res = await flightPathApi(id);
   const pathArr = res.data.path.map((x: ILonLat) => {
     return fromLonLat([x.lon, x.lat]);
@@ -96,7 +99,8 @@ async function addPath(planeLayer: FeatureLike, map: Map) {
     source &&
       source.addFeature(
         new Feature({
-          geometry: new LineString(pathArr),
+          geometry: new LineString([...pathArr, currentPoint]),
+          icao24: id,
         }),
       );
   }

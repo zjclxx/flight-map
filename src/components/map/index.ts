@@ -5,6 +5,7 @@ import { fromLonLat } from "ol/proj";
 import { createMapLayers } from "./mapLayer";
 import { createPlaneLayers } from "./planeLayer";
 import { attachEvent } from "./event";
+import { updateMap } from "./update";
 
 export async function initMap(dom: HTMLElement | null) {
   if (!dom) return;
@@ -17,7 +18,7 @@ export async function initMap(dom: HTMLElement | null) {
       center,
       zoom: 4,
       minZoom: 1,
-      maxZoom: 13,
+      maxZoom: 15,
     }),
   });
   // 动态添加
@@ -32,4 +33,5 @@ export async function initMap(dom: HTMLElement | null) {
   });
 
   attachEvent(map);
+  updateMap(map);
 }
