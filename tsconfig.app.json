@@ -12,7 +12,7 @@
     "noUncheckedSideEffectImports": true,
 
     // 忽略baseUrl报错
-    "ignoreDeprecations": "6.0",
+    // "ignoreDeprecations": "6.0", //build不识别报错
     "baseUrl": ".",
     "paths": {
       "@/*": ["src/*"]
